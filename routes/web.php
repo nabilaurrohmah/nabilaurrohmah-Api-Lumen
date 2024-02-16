@@ -16,3 +16,7 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+// stuff
+// struktur : $router->method('/path', 'NamaController@namaFunction');
+$router->get('/stuffs', 'StuffController@index');
