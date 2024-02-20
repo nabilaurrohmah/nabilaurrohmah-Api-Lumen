@@ -19,4 +19,16 @@ $router->get('/', function () use ($router) {
 
 // stuff
 // struktur : $router->method('/path', 'NamaController@namaFunction');
-$router->get('/stuffs', 'StuffController@index');
+$router->group(['prefix' => 'stuff'], function() use ($router) {
+    // static routes
+    $router->get('/data', 'StuffController@index');
+    $router->post('/', 'StuffController@store');
+    $router->get('/trash', 'StuffController@trash');
+
+    // dynamic routes
+    $router->get('{id}', 'StuffController@show');
+    $router->patch('/{id}', 'StuffController@update');
+    $router->delete('/{id}', 'StuffController@destroy');
+    $router->get('/restore/{id}', 'StuffController@restore');
+    $router->delete('/permanent/{id}', 'StuffController@deletePermanent');
+});
