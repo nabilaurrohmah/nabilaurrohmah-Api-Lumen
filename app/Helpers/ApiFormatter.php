@@ -18,8 +18,5 @@ class ApiFormatter {
         self::$response['message'] = $message;
         self::$response['data'] = $data;
         return response()->json(self::$response, self::$response['status']);
-        // status : http status code (200,400,500)
-        // message : desc http status code ('success', 'bad request', 'server error')
-        // data : hasil yg diambil dari db 
     }
 }

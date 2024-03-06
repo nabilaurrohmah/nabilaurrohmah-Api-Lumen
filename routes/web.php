@@ -32,3 +32,5 @@ $router->group(['prefix' => 'stuff'], function() use ($router) {
     $router->get('/restore/{id}', 'StuffController@restore');
     $router->delete('/permanent/{id}', 'StuffController@deletePermanent');
 });
+
+$router->post('/inbound-stuff/store', 'InboundStuffController@store');
