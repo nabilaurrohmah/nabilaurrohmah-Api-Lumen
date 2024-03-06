@@ -19,18 +19,29 @@ $router->get('/', function () use ($router) {
 
 // stuff
 // struktur : $router->method('/path', 'NamaController@namaFunction');
-$router->group(['prefix' => 'stuff'], function() use ($router) {
-    // static routes
-    $router->get('/data', 'StuffController@index');
-    $router->post('/', 'StuffController@store');
-    $router->get('/trash', 'StuffController@trash');
 
-    // dynamic routes
-    $router->get('{id}', 'StuffController@show');
-    $router->patch('/{id}', 'StuffController@update');
-    $router->delete('/{id}', 'StuffController@destroy');
-    $router->get('/restore/{id}', 'StuffController@restore');
-    $router->delete('/permanent/{id}', 'StuffController@deletePermanent');
-});
+// statis
+$router->get('/stuffs', 'StuffController@index');
+$router->post('/stuffs/store', 'StuffController@store');
+$router->get('/stuffs/trash', 'StuffController@trash');
 
-$router->post('/inbound-stuff/store', 'InboundStuffController@store');
+$router->get('/users', 'UserController@index');
+$router->post('/users/store', 'UserController@store');
+$router->get('/users/trash', 'UserController@trash');
+
+$router->post('/inbound-stuffs/store', 'InboundStuffController@store');
+
+// dinamis
+$router->get('/stuffs/{id}', 'StuffController@show');
+$router->patch('/stuffs/update/{id}', 'StuffController@update');
+$router->delete('/stuffs/delete/{id}', 'StuffController@destroy');
+$router->get('/stuffs/trash/restore/{id}', 'StuffController@restore');
+$router->get('/stuffs/trash/permanent-delete/{id}', 'StuffController@permanentDelete');
+
+$router->get('/users/{id}', 'UserController@show');
+$router->patch('/users/update/{id}', 'UserController@update');
+$router->delete('/users/delete/{id}', 'UserController@destroy');
+$router->get('/users/trash/restore/{id}', 'UserController@restore');
+$router->get('/users/trash/permanent-delete/{id}', 'UserController@permanentDelete');
+
+$router->delete('/inbound-stuffs/delete/{id}', 'InboundStuffController@destroy');

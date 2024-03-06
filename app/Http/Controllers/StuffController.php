@@ -11,7 +11,6 @@ class StuffController extends Controller
     public function index()
     {
         try {
-            // ambil data yg mau ditampilkan
             $data = Stuff::all()->toArray();
 
             return ApiFormatter::sendResponse(200, 'success', $data);
@@ -23,20 +22,21 @@ class StuffController extends Controller
     public function store(Request $request)
     {
         try {
-            //validasi
             $this->validate($request, [
-                'name' => 'required',
+                'name' => 'required|min:3',
                 'category' => 'required',
             ]);
 
-            //proses tambah data
-            //NamaModel::create([ 'column' => $request->name_or_key, ])
-            $data = Stuff::create([
+            $prosesData = Stuff::create([
                 'name' => $request->name,
                 'category' => $request->category,
             ]);
 
-            return ApiFormatter::sendResponse(200, 'success', $data);
+            if ($prosesData) {
+                return ApiFormatter::sendResponse(200, 'success', $prosesData);
+            } else {
+                return ApiFormatter::sendResponse(400, 'bad request', 'Gagal memproses tambah data stuff! silahkan coba lagi.');
+            }
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }
@@ -47,11 +47,7 @@ class StuffController extends Controller
         try {
             $data = Stuff::where('id', $id)->first();
 
-            if (is_null($data)) {
-                return ApiFormatter::sendResponse(400, 'bad request', 'Data not found!');
-            } else {
-                return ApiFormatter::sendResponse(200, 'success', $data);
-            }
+            return ApiFormatter::sendResponse(200, 'success', $data);
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }
@@ -62,19 +58,17 @@ class StuffController extends Controller
         try {
             $this->validate($request, [
                 'name' => 'required',
-                'category' => 'required'
+                'category' => 'required',
             ]);
 
-            $checkProses = Stuff::where('id', $id)->update([
+            $checkProsess = Stuff::where('id', $id)->update([
                 'name' => $request->name,
-                'category' => $request->category
+                'category' => $request->category,
             ]);
 
-            if ($checkProses) {
-                $data = Stuff::find($id);
+            if ($checkProsess) {
+                $data = Stuff::where('id', $id)->first();
                 return ApiFormatter::sendResponse(200, 'success', $data);
-            } else {
-                return ApiFormatter::sendResponse(400, 'bad request', 'Gagal mengubah data!');
             }
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
@@ -84,9 +78,11 @@ class StuffController extends Controller
     public function destroy($id)
     {
         try {
-            $checkProses = Stuff::where('id', $id)->delete();
+            $checkProsess = Stuff::where('id', $id)->delete();
 
-            return ApiFormatter::sendResponse(200, 'success', 'Data stuff berhasil dihapus!');
+            if ($checkProsess) {
+                return ApiFormatter::sendResponse(200, 'success', 'Berhasil hapus data stuff!');
+            }
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }
@@ -95,7 +91,7 @@ class StuffController extends Controller
     public function trash()
     {
         try {
-            // onlyTrashed : mencari data yang deletes_at nya BUKAN null
+            // onlyTrashed() : memanggil data sampah/yg sudah dihapus/deleted_at nya terisi
             $data = Stuff::onlyTrashed()->get();
 
             return ApiFormatter::sendResponse(200, 'success', $data);
@@ -107,25 +103,27 @@ class StuffController extends Controller
     public function restore($id)
     {
         try {
-            $checkProses = Stuff::onlyTrashed()->where('id', $id)->restore();
+            // restore : mengambalikan data spesifik yg dihapus/menghapus deleted_at nya
+            $checkRestore = Stuff::onlyTrashed()->where('id', $id)->restore();
 
-            if ($checkProses) {
-                $data = Stuff::find($id);
+            if ($checkRestore) {
+                $data = Stuff::where('id', $id)->first();
                 return ApiFormatter::sendResponse(200, 'success', $data);
-            } else {
-                return ApiFormatter::sendResponse(400, 'bad request', 'Gagal mengembalikan data!');
             }
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }
     }
 
-    public function deletePermanent($id)
+    public function permanentDelete($id)
     {
         try {
-            $checkProses = Stuff::onlyTrashed()->where('id', $id)->forceDelete();
+            // forceDelete() : menghapus permanent (hilang jg data di db nya)
+            $checkPermanentDelete = Stuff::onlyTrashed()->where('id', $id)->forceDelete();
 
-            return ApiFormatter::sendResponse(200, 'success', 'Berhasil menghapus permanen data stuff!');
+            if ($checkPermanentDelete) {
+                return ApiFormatter::sendResponse(200, 'success', 'Berhasil menghapus permanent data stuff!');
+            }
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }
