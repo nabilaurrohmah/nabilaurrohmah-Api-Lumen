@@ -31,7 +31,7 @@ class UserController extends Controller
             ]);
 
             $prosesData = User::create([
-                'name' => $request->name,
+                'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,

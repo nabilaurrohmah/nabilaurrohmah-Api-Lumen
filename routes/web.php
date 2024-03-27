@@ -30,7 +30,7 @@ $router->post('/users/store', 'UserController@store');
 $router->get('/users/trash', 'UserController@trash');
 
 $router->post('/inbound-stuffs/store', 'InboundStuffController@store');
-
+$router->get('/inbound-stuffs/data', 'InboundStuffController@index');
 // dinamis
 $router->get('/stuffs/{id}', 'StuffController@show');
 $router->patch('/stuffs/update/{id}', 'StuffController@update');

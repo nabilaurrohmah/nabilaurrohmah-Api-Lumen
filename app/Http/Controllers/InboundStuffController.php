@@ -11,6 +11,21 @@ use Illuminate\Support\Str;
 
 class InboundStuffController extends Controller
 {
+    public function index(Request $request)
+    {
+        try {
+            if($request->filter_id) {
+                $data = InboundStuff::where('stuff_id', $request->filter_id)->with('stuff')->get();
+            } else {
+                $data = InboundStuff::with('stuff')->get();
+            }
+
+            return ApiFormatter::sendResponse(200, 'success', $data);
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
     public function store(Request $request)
     {
         try {

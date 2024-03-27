@@ -11,7 +11,7 @@ class StuffController extends Controller
     public function index()
     {
         try {
-            $data = Stuff::all()->toArray();
+            $data = Stuff::all();
 
             return ApiFormatter::sendResponse(200, 'success', $data);
         } catch (\Exception $err) {
