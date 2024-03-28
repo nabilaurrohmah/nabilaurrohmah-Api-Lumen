@@ -15,9 +15,9 @@ class InboundStuffController extends Controller
     {
         try {
             if($request->filter_id) {
-                $data = InboundStuff::where('stuff_id', $request->filter_id)->with('stuff')->get();
+                $data = InboundStuff::where('stuff_id', $request->filter_id)->with('stuff', 'stuff.stuffStock')->get();
             } else {
-                $data = InboundStuff::with('stuff')->get();
+                $data = InboundStuff::all();
             }
 
             return ApiFormatter::sendResponse(200, 'success', $data);
@@ -94,6 +94,53 @@ class InboundStuffController extends Controller
                 $updatedStuffWithInboundAndStock = Stuff::where('id', $stuffId)->with('inboundStuffs', 'stuffStock')->first();
                 return ApiFormatter::sendResponse(200, 'success', $updatedStuffWithInboundAndStock);
             }
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
+    public function trash()
+    {
+        try {
+            $data = InboundStuff::onlyTrashed()->get();
+
+            return ApiFormatter::sendResponse(200, 'success', $data);
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            $restore = InboundStuff::onlyTrashed()->where('id', $id)->restore();
+
+            if ($restore) {
+                $data = InboundStuff::find($id);
+                $stock = StuffStock::where('stuff_id', $data['stuff_id'])->first();
+                $total_available = (int)$stock['total_available'] + (int)$data['total'];
+                $stock->update(['total_available' => $total_available]);
+
+                $dataResponse = Stuff::where('id', $data['stuff_id'])->with('inboundStuffs', 'stuffStock')->first();
+                return ApiFormatter::sendResponse(200, 'success', $dataResponse);
+            }
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
+    public function permanentDelete($id)
+    {
+        try {
+           $data = InboundStuff::onlyTrashed()->where('id', $id)->first();
+
+           $images = explode("/", $data['proff_file']);
+           if (file_exists(public_path('upload-images/' . $images[4]))) {
+                unlink(public_path('upload-images/' . $images[4]));
+           }
+
+           $data->forceDelete();
+           return ApiFormatter::sendResponse(200, 'success', 'Berhasil hapus permanen inbound beserta file nya!');
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }

@@ -31,6 +31,8 @@ $router->get('/users/trash', 'UserController@trash');
 
 $router->post('/inbound-stuffs/store', 'InboundStuffController@store');
 $router->get('/inbound-stuffs/data', 'InboundStuffController@index');
+$router->get('/inbound-stuffs/trash', 'InboundStuffController@trash');
+
 // dinamis
 $router->get('/stuffs/{id}', 'StuffController@show');
 $router->patch('/stuffs/update/{id}', 'StuffController@update');
@@ -45,3 +47,5 @@ $router->get('/users/trash/restore/{id}', 'UserController@restore');
 $router->get('/users/trash/permanent-delete/{id}', 'UserController@permanentDelete');
 
 $router->delete('/inbound-stuffs/delete/{id}', 'InboundStuffController@destroy');
+$router->get('/inbound-stuffs/restore/{id}', 'InboundStuffController@restore');
+$router->delete('/inbound-stuffs/permanent-delete/{id}', 'InboundStuffController@permanentDelete');
