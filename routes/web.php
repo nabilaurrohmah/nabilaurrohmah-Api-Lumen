@@ -37,6 +37,9 @@ $router->post('/inbound-stuffs/store', 'InboundStuffController@store');
 $router->get('/inbound-stuffs/data', 'InboundStuffController@index');
 $router->get('/inbound-stuffs/trash', 'InboundStuffController@trash');
 
+$router->post('/lendings/store', 'LendingController@store');
+$router->get('/lendings', 'LendingController@index');
+
 // dinamis
 $router->get('/stuffs/{id}', 'StuffController@show');
 $router->patch('/stuffs/update/{id}', 'StuffController@update');

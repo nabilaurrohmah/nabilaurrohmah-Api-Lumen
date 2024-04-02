@@ -12,11 +12,11 @@ class StuffController extends Controller
     {
         $this->middleware('auth:api');
     }
-    
+
     public function index()
     {
         try {
-            $data = Stuff::all();
+            $data = Stuff::with('stuffStock')->get();
 
             return ApiFormatter::sendResponse(200, 'success', $data);
         } catch (\Exception $err) {
