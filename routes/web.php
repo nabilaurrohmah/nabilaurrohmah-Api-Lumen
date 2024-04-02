@@ -17,6 +17,10 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->post('/login', 'AuthController@login');
+$router->get('/logout', 'AuthController@logout');
+$router->get('/profile', 'AuthController@me');
+
 // stuff
 // struktur : $router->method('/path', 'NamaController@namaFunction');
 

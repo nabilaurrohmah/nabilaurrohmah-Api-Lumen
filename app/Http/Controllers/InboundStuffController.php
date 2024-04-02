@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 
 class InboundStuffController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function index(Request $request)
     {
         try {
