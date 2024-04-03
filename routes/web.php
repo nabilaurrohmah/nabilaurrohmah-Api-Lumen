@@ -56,3 +56,7 @@ $router->get('/users/trash/permanent-delete/{id}', 'UserController@permanentDele
 $router->delete('/inbound-stuffs/delete/{id}', 'InboundStuffController@destroy');
 $router->get('/inbound-stuffs/restore/{id}', 'InboundStuffController@restore');
 $router->delete('/inbound-stuffs/permanent-delete/{id}', 'InboundStuffController@permanentDelete');
+
+$router->post('/restorations/{lending_id}', 'RestorationController@store');
+$router->get('/lendings/{id}', 'LendingController@show');
+$router->delete('/lendings/delete/{id}', 'LendingController@destroy');

@@ -84,13 +84,17 @@ class InboundStuffController extends Controller
     {
         try {
             $inboundData = InboundStuff::where('id', $id)->first();
+            $dataStock = StuffStock::where('stuff_id', $inboundData['stuff_id'])->first();
+
+            if ((int)$dataStock['total_available'] < (int)$inboundData['total']) {
+                return ApiFormatter::sendResponse(400, 'bad request', 'Jumlah total inbound yang akan dihapus lebih besar dari total available stuff saat ini!');
+            }
             // simpan data dr inbound yg diperlukan/akan digunakan nnti setelah delete
             $stuffId = $inboundData['stuff_id'];
             $totalInbound = $inboundData['total'];
             $inboundData->delete();
 
             // kurangi total_available sblmnya dengan total dr inbound dihps
-            $dataStock = StuffStock::where('stuff_id', $inboundData['stuff_id'])->first();
             $total_available = (int)$dataStock['total_available'] - (int)$totalInbound;
 
             $minusTotalStock = $dataStock->update(['total_available' => $total_available]);

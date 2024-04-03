@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StuffStock;
 use App\Models\Lending;
+use App\Models\Restoration;
 use App\Helpers\ApiFormatter;
 
 class LendingController extends Controller
@@ -18,6 +19,17 @@ class LendingController extends Controller
     {
         try {
             $data = Lending::with('stuff', 'user', 'restoration')->get();
+
+            return ApiFormatter::sendResponse(200, 'success', $data);
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $data = Lending::where('id', $id)->with('user', 'restoration', 'restoration.user', 'stuff', 'stuff.stuffStock')->first();
 
             return ApiFormatter::sendResponse(200, 'success', $data);
         } catch (\Exception $err) {
@@ -60,6 +72,26 @@ class LendingController extends Controller
 
                 return ApiFormatter::sendResponse(200, 'success', $dataLending);
             }
+        } catch (\Exception $err) {
+            return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
+        }
+    }
+
+    public function destroy ($id)
+    {
+        try {
+            $restoration = Restoration::where('lending_id', $id)->first();
+            if ($restoration) {
+                return ApiFormatter::sendResponse(400, 'bad request', 'Data peminjaman sudah memiliki data pengembalian!');
+            }
+
+            $lending = Lending::where('id', $id)->first();
+            $stuffStock = StuffStock::where('stuff_id', $lending['stuff_id'])->first();
+            $totalAvailable = (int)$stuffStock['total_available'] + (int)$lending['total_stuff'];
+            $stuffStock->update(['total_available' => $totalAvailable]);
+            $lending->delete();
+
+            return ApiFormatter::sendResponse(200, 'success', 'Berhasil menghapus data peminjaman!');
         } catch (\Exception $err) {
             return ApiFormatter::sendResponse(400, 'bad request', $err->getMessage());
         }

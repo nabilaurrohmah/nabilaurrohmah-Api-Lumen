@@ -83,7 +83,12 @@ class StuffController extends Controller
     public function destroy($id)
     {
         try {
-            $checkProsess = Stuff::where('id', $id)->delete();
+            $stuff = Stuff::where('id', $id)->doesntHave('inboundStuffs')->first();
+
+            if (!$stuff) {
+                return ApiFormatter::sendResponse(400, 'bad request', 'Tidak dapat menghapus data stuff, sudah terdapat data inbound!');
+            }
+            $checkProsess = $stuff->delete();
 
             if ($checkProsess) {
                 return ApiFormatter::sendResponse(200, 'success', 'Berhasil hapus data stuff!');
