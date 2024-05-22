@@ -40,6 +40,7 @@ $router->group(['middleware' => 'cors'], function ($router) {
 
     $router->post('/lendings/store', 'LendingController@store');
     $router->get('/lendings', 'LendingController@index');
+    $router->get('/lendings/{id}', 'LendingController@show');
 
     // dinamis
     $router->get('/stuffs/{id}', 'StuffController@show');
